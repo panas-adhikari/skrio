@@ -54,4 +54,18 @@ function Addtask(task,dispatch){
     }
     asyncAdd();
 }
-export {FetchTaskList, DeleteTask,Addtask};
+
+function UpdateTask(task,dispatch){
+    const asyncUpdate = async()=>{
+        try{
+            const response = await axios.put(`http://127.0.0.1:5000/tasks/update/${task.id}`, task);
+            if(response.status===200){
+                dispatch({type:"UPDATE_TASK",payload:task});
+            }
+        }catch(e){
+            console.log(e);
+        }
+    }
+    asyncUpdate();
+}
+export {FetchTaskList, DeleteTask,Addtask , UpdateTask};
