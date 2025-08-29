@@ -10,7 +10,7 @@ function Home() {
   return (
     <div className="container">
       <h1 className="font-weight-bold text-center mb-3">My Task List</h1>
-      <AddTaskComponent show={show} setShow={setShow} />
+      <AddTaskComponent show={show} setShow={setShow} actionType={"save"} />
       <TaskList />
       <nav className="navbar fixed-bottom navbar-light bg-light justify-content-center">
         <Button variant="primary" size="lg" onClick={() => setShow(true)}>
