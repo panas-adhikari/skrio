@@ -1,7 +1,6 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS
-import random
-import string
+from managers.db import DBManager
 
 class Task:
     '''This class provides the blueprint of a task'''
@@ -16,7 +15,6 @@ class Task:
     def get_dict(self):
         '''This function returns the dict version of the instance for jsonify'''
         return {
-            "id": self.id,
             "task_heading": self.task_heading,
             "task_done": "Done" if self.task_done else "Pending",
             "task_due_date": self.task_due_date,
@@ -27,36 +25,35 @@ class Task:
 class TaskBook:
     '''This class aims to handle the list of tasks'''
     def __init__(self):
-        self.tasks = []
-        self._next_id = 1 # Start ID at 1 for clarity
+        self.taskBookDb = DBManager()
+        
 
     def add_task(self, task: Task):
         '''Add new task to the list'''
-        task.id = self._next_id
-        self._next_id += 1
-        self.tasks.append(task.get_dict())
-        return {"message": "success", "task_id": task.id}
+        task_dict = task.get_dict()
+        try:
+            new_task_id = self.taskBookDb.add_task(task_dict)
+        except Exception as e:
+            print("Error adding task:", e)
+        return {"message": "success", "task_id": new_task_id}
 
     def remove_task(self, task_id: int):
         '''Removes a task by its ID'''
-        original_length = len(self.tasks)
-        # Filter out the task with the matching ID
-        self.tasks = [task for task in self.tasks if task.get("id") != task_id]
-        return len(self.tasks) < original_length # Returns True if a task was removed
+        self.taskBookDb.remove_task(task_id) 
 
     def get_tasks(self):
         '''Returns the list of tasks'''
-        return self.tasks
+        return self.taskBookDb.get_all_tasks()
 
     def toggle_task(self, task_id: int):
         '''Toggles the status of a task by its ID'''
-        for task in self.tasks:
-            if task.get("id") == task_id:
-                current_status = task.get("task_done")
-                task["task_done"] = "Pending" if current_status == "Done" else "Done"
-                return True
+        task = self.taskBookDb.get_task_from_id(task_id)
+        task["task_done"] = "Pending" if task["task_done"] == "Done" else "Done"
+        self.taskBookDb.update_task(task_id , task)
         return False
-
+    
+    def close_connection(self):
+        self.taskBookDb.close_connection()
 # --- Flask App ---
 
 app = Flask(__name__)
@@ -98,7 +95,7 @@ def get_tasks_route():
     return jsonify(tasks), 200
 
 if __name__ == "__main__":
-    taskbook.add_task(Task("Build a backend API", "2025-09-01", "High"))
-    taskbook.add_task(Task("Plan the frontend", "2025-09-05", "Medium"))
-    taskbook.add_task(Task("Learn Redux", "2025-08-30"))
-    app.run(debug=True)
+    try:
+        app.run()
+    except KeyboardInterrupt:
+        taskbook.close_connection()
