@@ -39,7 +39,10 @@ class TaskBook:
 
     def remove_task(self, task_id: int):
         '''Removes a task by its ID'''
-        self.taskBookDb.remove_task(task_id) 
+        if self.taskBookDb.remove_task(task_id) :
+            return True
+        else:
+            return False
 
     def get_tasks(self):
         '''Returns the list of tasks'''

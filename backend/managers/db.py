@@ -55,8 +55,10 @@ class DBManager:
             printdb("Removed a task")
             if result.deleted_count >0:
                 self.id_pool.update_one({}, {"$addToSet": {"available_ids": task_id}}, upsert=True)
+                return True
         except Exception as e:
             print("Error removing task:",e)
+            return False
 
     def update_task(self,task_id:int,task:dict):
         """Funciton to update any task (for future integration)"""
