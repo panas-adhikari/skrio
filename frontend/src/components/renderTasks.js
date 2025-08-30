@@ -1,8 +1,8 @@
 import { useAppContext } from "../context/AppContext";
 import { useEffect, useState } from "react";
-import { FetchTaskList, DeleteTask ,UpdateTask} from "../context/apiManager";
+import { FetchTaskList, DeleteTask, UpdateTask } from "../context/apiManager";
 import AddTaskComponent from "./addTask";
-
+import "./toggle.css";
 function TaskList() {
   const { state, dispatch } = useAppContext(); //to get and to dispatch update to app context
   const [updateShow, setUpdateShow] = useState(false);
@@ -10,7 +10,7 @@ function TaskList() {
   const [date, setDate] = useState(null);
   const [priority, setPriority] = useState(null);
   const [category, setCategory] = useState(null);
-  const [id , setID] = useState(null);
+  const [id, setID] = useState(null);
 
   // when update is clicked then set the value and finally , show the modal
   const handleUpdate = (id) => {
@@ -39,6 +39,18 @@ function TaskList() {
     DeleteTask(id, dispatch);
   };
 
+  const handleComplete = (e, id, task) => {
+    const isChecked = e.target.checked;
+    task["id"] = id;
+    if (isChecked) {
+      task["task_done"] = "Done";
+    } else {
+      task["task_done"] = "Pending";
+    }
+    console.log(task);
+    UpdateTask(task, dispatch);
+  };
+
   useEffect(() => {
     FetchTaskList(dispatch);
   }, [dispatch]);
@@ -64,6 +76,7 @@ function TaskList() {
             <th scope="col">Pending</th>
             <th scope="col">Due Date</th>
             <th scope="col">Actions</th>
+            <th scope="col">Complete</th>
           </tr>
         </thead>
         <tbody>
@@ -91,6 +104,19 @@ function TaskList() {
                   >
                     Delete
                   </button>
+                </td>
+                <td>
+                  <div className="checkbox-wrapper mx-2">
+                    <input
+                      id={`_checkbox-${task.id}`}
+                      type="checkbox"
+                      onClick={(e) => handleComplete(e, task.id, task)}
+                      checked={task.task_done === "Done"}
+                    />
+                    <label htmlFor={`_checkbox-${task.id}`}>
+                      <div className="tick_mark"></div>
+                    </label>
+                  </div>
                 </td>
               </tr>
             ))

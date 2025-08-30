@@ -56,6 +56,8 @@ class TaskBook:
         return False
     def update_task(self,task_id:int ,updated_task: Task):
         try:
+            print("LOG debug")
+            print(updated_task.get_dict())
             self.taskBookDb.update_task(task_id,updated_task.get_dict())
             return True
         except Exception as e:
@@ -103,6 +105,7 @@ def toggle_task_route(task_id: int):
 def get_tasks_route():
     tasks = taskbook.get_tasks()
     return jsonify(tasks), 200
+
 @app.route('/tasks/update/<int:task_id>', methods=['PUT'])
 def update_task_route(task_id: int):
     data = request.json
@@ -113,16 +116,25 @@ def update_task_route(task_id: int):
     task_due_date = data.get("task_due_date")
     task_priority = data.get("task_priority")
     task_category = data.get("task_category")
-
-    updated_task = Task(task_heading, task_due_date, task_priority, task_category)
+    task_done = True if data.get("task_done") == "Done" else False
+    updated_task = Task(task_heading, task_due_date, task_priority, task_category, task_done)
     if taskbook.update_task(int(task_id),updated_task):
         return jsonify({"message": "Task updated successfully"}), 200
     else:
         return jsonify({"message": "Task Not Updated"}), 404
 
+@app.teardown_appcontext
+def close_db(e=None):
+    print("Closing connection to the database")
+    taskbook.close_connection()
+
 if __name__ == "__main__":
     try:
         app.run()
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as e:
         print("Shutting down server...")
+        taskbook.close_connection()
+    except:
+        print("Error occurred")
+    finally:
         taskbook.close_connection()
