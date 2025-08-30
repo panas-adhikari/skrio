@@ -7,6 +7,7 @@ function FetchTaskList(dispatch){
         const response = await axios.get("http://127.0.0.1:5000/get_tasks");
         if(response.status === 200){
             const taskList = response.data;
+            console.log(taskList);
             dispatch({type:"UPDATE_TASKLIST",payload:taskList});
         }else{
             console.log("STATUS CODE : "+response.status);

@@ -32,7 +32,7 @@ function AddTaskComponent(props) {
   );
   const { dispatch } = useAppContext();
 
-  // useEffect hooks to synchronize state with props when the component is used for an update.
+  // using useeffect for updating components when the props change
   useEffect(() => {
     if (props.description) {
       setDescription(props.description);
@@ -86,7 +86,7 @@ function AddTaskComponent(props) {
   }
 
   return (
-    // A modal which pops up when add task button is clicked
+    // A modal which pops up when add task button is clicked used for adding and updating tasks
     <Modal show={props.show} onHide={() => props.setShow(false)} centered>
       <Modal.Header closeButton>
         <Modal.Title>
