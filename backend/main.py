@@ -7,14 +7,15 @@ from managers.sessionManager import get_requester_user
 
 
 app = Flask(__name__)
-CORS(app)
+# CORS(app , origins=["http://192.168.1.65:3000"])
+CORS(app )
 taskbook = TaskBook()
 
 @app.route('/add_task', methods=['POST'])
 def add_task_route():
     data = request.json
     jwt_token = request.headers.get('Authorization')
-    print(f"JWT {jwt_token}")
+    # print(f"JWT {jwt_token}")
     if not jwt_token:
         print("JWT token not found")
         return jsonify({"error": "Unauthorized"}), 401
@@ -52,7 +53,7 @@ def toggle_task_route(task_id: int):
 @app.route('/get_tasks', methods=['GET'])
 def get_tasks_route():
     jwt_token = request.headers.get('Authorization')
-    print(f"JWT {jwt_token}")
+    # print(f"JWT {jwt_token}")
 
     if not jwt_token:
         print("JWT token not found")
@@ -64,6 +65,8 @@ def get_tasks_route():
         return jsonify({"error": "Unauthorized"}), 401
 
     tasks = taskbook.get_tasks(user_id)
+    # for task in tasks:
+    #     print(task)
     return jsonify(tasks), 200
 
 
@@ -130,7 +133,7 @@ def register():
 
 if __name__ == "__main__":
     try:
-        app.run()
+        app.run(host="0.0.0.0",port=5000)
     except KeyboardInterrupt as e:
         print("Shutting down server...")
         taskbook.close_connection()

@@ -1,7 +1,7 @@
 from pymongo import MongoClient
 from datetime import datetime , timezone #for logging the timestamp of the creating and insertion of the task
-def printdb(args):
-    print(f"Database Log : {args}")
+# def printdb(args):
+#     print(f"Database Log : {args}")
 
 class DBTaskManager:
     '''
@@ -63,10 +63,7 @@ class DBTaskManager:
     def update_task(self,task_id:int,task:dict):
         """Funciton to update any task (for future integration)"""
         try:
-            result = self.tasks_collection.update_one({"id":task_id},{"$set":task})
-            printdb(f"affected : {result.modified_count}")
-            if result.modified_count == 0:
-                printdb("No task was updated")
+            self.tasks_collection.update_one({"id":task_id},{"$set":task})
         except Exception as e:
             print("Error updating task:",e)
 
@@ -74,7 +71,7 @@ class DBTaskManager:
         """Function to get all the tasks logged in the database."""
         try:
             result = []
-            for collection in self.tasks_collection.find({"user_id":task_user_id},{"_id":0 , "user_id":0}):
+            for collection in self.tasks_collection.find({"user_id":task_user_id},{"_id":0 }):
                 result.append(collection)
             return result
         except Exception as e:

@@ -16,7 +16,7 @@ function Login({ onLoginSuccess }) {
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,64}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async(e) => {
     e.preventDefault();
     const newErrors = {};
     //checking if the action was for registering or logging in
@@ -40,14 +40,17 @@ function Login({ onLoginSuccess }) {
 
     if (Object.keys(newErrors).length === 0) {
       if (isRegister) {
-        if(RegisterNewUser({  username, password, email })){
-          onLoginSuccess();
-        }
-      } else {
-        if(HandleLogin({ username, password })){
-          onLoginSuccess();
-        }
+      const result = RegisterNewUser({ username, password, email });
+      if (result?.success) {
+        onLoginSuccess();
       }
+    } else {
+      const result = await HandleLogin({ username, password });
+      console.log(result);
+      if (result?.success) {
+        onLoginSuccess(); 
+      }
+    }
     }
   };
   return (
