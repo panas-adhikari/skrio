@@ -4,12 +4,16 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { useState } from "react";
 import { Button } from "react-bootstrap";
 
-function Home() {
-  const [show , setShow] = useState(false); //to store the state of the modal in the addtaskComponent
+function Home({ setLogout }) {
+  const [show, setShow] = useState(false); //to store the state of the modal in the addtaskComponent
 
   return (
     <div className="container">
       <h1 className="font-weight-bold text-center mb-3">My Task List</h1>
+      <button type="button" className="btn btn-danger" onClick={setLogout}>
+        Logout
+      </button>
+
       <AddTaskComponent show={show} setShow={setShow} actionType={"save"} />
       <TaskList />
       <nav className="navbar fixed-bottom navbar-light bg-light justify-content-center">
