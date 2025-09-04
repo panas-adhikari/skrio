@@ -7,13 +7,26 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
 import { AppProvider } from './context/AppContext';
 import Home from './pages/home';
+import Login from './pages/login';
+import { useState } from 'react';
+
+function MainApp(){
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  return(
+    <AppProvider>
+      {isLoggedIn ? (
+        <Home />
+      ) : (
+        <Login onLoginSuccess={() => setIsLoggedIn(true)} />
+      )}
+    </AppProvider>
+  )
+}
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
   <React.StrictMode>
-    <AppProvider>
-      <Home/>
-    </AppProvider>
+    <MainApp />
   </React.StrictMode>
 );
 

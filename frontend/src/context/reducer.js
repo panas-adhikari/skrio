@@ -1,4 +1,4 @@
-export const initialState = {taskList:[]}; //initial state of the tasklist before fetching the api
+export const initialState = {taskList:[]};
 export function appReducer(state,action){
     // Different action type to perform different action
     switch (action.type){
