@@ -6,7 +6,9 @@ function FetchTaskList(dispatch) {
   // console.log("jwt token "+localStorage.getItem("token"));
   const asyncFetch = async () => {
     try {
-      const response = await axios.get(`${axios_base_url}get_tasks` , {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}} );
+      const response = await axios.get(`${axios_base_url}get_tasks`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
       if (response.status === 200) {
         const taskList = response.data;
         // console.log(taskList);
@@ -29,7 +31,10 @@ function DeleteTask(taskId, dispatch) {
   const asyncDel = async () => {
     try {
       const response = await axios.delete(
-        `${axios_base_url}tasks/delete/${taskId}`, { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } }
+        `${axios_base_url}tasks/delete/${taskId}`,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       // console.log("Delete Task API Response: ", response);
       if (response.status === 200) {
@@ -48,7 +53,9 @@ function Addtask(task, dispatch) {
   // console.log("jwt token "+localStorage.getItem("token"));
   const asyncAdd = async () => {
     try {
-      const response = await axios.post(`${axios_base_url}add_task`, task , {headers: {"Authorization": `Bearer ${localStorage.getItem("token")}`}});
+      const response = await axios.post(`${axios_base_url}add_task`, task, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
 
       if (response.status === 201) {
         task.id = response.data.task_id;
@@ -68,8 +75,10 @@ function UpdateTask(task, dispatch) {
     try {
       const response = await axios.put(
         `${axios_base_url}tasks/update/${task.id}`,
-        task
-      , { headers: { "Authorization": `Bearer ${localStorage.getItem("token")}` } }
+        task,
+        {
+          headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+        }
       );
       if (response.status === 200) {
         dispatch({ type: "UPDATE_TASK", payload: task });
@@ -104,24 +113,21 @@ function RegisterNewUser(credentials) {
       }
     } catch (e) {
       console.log(e);
-    return { success: false };
+      return { success: false };
     }
   };
   return asyncRegister();
 }
 async function HandleLogin(credentials) {
   try {
-    const response = await axios.post(
-      `${axios_base_url}login`,
-      credentials
-    );
+    const response = await axios.post(`${axios_base_url}login`, credentials);
 
     if (response.status === 200) {
       const data = response.data;
       if (data.status === "success") {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        return { success: true };   // <-- FIX
+        return { success: true }; // <-- FIX
       } else {
         return { success: false, message: data.message };
       }
@@ -132,6 +138,23 @@ async function HandleLogin(credentials) {
     return { success: false, error: e };
   }
 }
+async function checkUserExists() {
+    try {
+      const response = await axios.get(`${axios_base_url}check_user`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+      });
+      if (response.status === 200) {
+        const data = response.data;
+        return data.exists;
+      } else {
+        console.log("STATUS CODE : " + response.status);
+        return false;
+      }
+    } catch (e) {
+      console.log("ERROR " + e);
+      return false;
+    }
+  };
 export {
   FetchTaskList,
   DeleteTask,
@@ -139,4 +162,5 @@ export {
   UpdateTask,
   HandleLogin,
   RegisterNewUser,
+  checkUserExists,
 };
