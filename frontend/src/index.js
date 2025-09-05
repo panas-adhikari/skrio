@@ -1,35 +1,51 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
+import React, { useEffect } from "react";
+import ReactDOM from "react-dom/client";
+import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { AppProvider } from './context/AppContext';
-import Home from './pages/home';
-import Login from './pages/login';
-import { useState } from 'react';
+import { AppProvider, useAppContext } from "./context/AppContext";
+import Home from "./pages/home";
+import Login from "./pages/login";
 
-function MainApp() {
-  const [isLoggedIn, setIsLogged] = useState(
-    !!localStorage.getItem("token") // stay logged in if token exists
-  );
+function AppContent() {
+  const { state, dispatch } = useAppContext();
+
+  useEffect(() => {
+    try {
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn === "true") {
+        dispatch({ type: "AUTHORIZE" });
+      } else {
+        dispatch({ type: "UNAUTHORIZE" });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  }, [dispatch]);
 
   const handleLogout = () => {
-    localStorage.removeItem("token");  // remove JWT
-    localStorage.removeItem("user");   // remove user info
-    setIsLogged(false);                // reset state
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    dispatch({ type: "UNAUTHORIZE" });
   };
 
+  return state.isAuthenticated ? (
+    <Home setLogout={handleLogout} />
+  ) : (
+    <Login onLoginSuccess={() => dispatch({ type: "AUTHORIZE" })} />
+  );
+}
+
+function MainApp() {
   return (
     <AppProvider>
-      {isLoggedIn ? (
-        <Home setLogout={handleLogout} />
-      ) : (
-        <Login onLoginSuccess={() => setIsLogged(true)} />
-      )}
+      <AppContent />
     </AppProvider>
   );
 }
-const root = ReactDOM.createRoot(document.getElementById('root'));
+
+const root = ReactDOM.createRoot(document.getElementById("root"));
 root.render(
   <React.StrictMode>
     <MainApp />

@@ -1,4 +1,4 @@
-export const initialState = {taskList:[]};
+export const initialState = {taskList:[],isAuthenticated:false};
 export function appReducer(state,action){
     // Different action type to perform different action
     switch (action.type){
@@ -17,6 +17,16 @@ export function appReducer(state,action){
                     task.id === action.payload.id ? {...task,...action.payload} : task
                 )
             };
+        case "AUTHORIZE":
+            return {
+                ...state,
+                isAuthenticated:true
+            }
+        case "UNAUTHORIZE":
+            return {
+                ...state,
+                isAuthenticated:false
+            }
         default:
             return state;
     }

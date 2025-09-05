@@ -5,7 +5,7 @@ import { Modal, Button } from "react-bootstrap";
 
 function AddTaskComponent(props) {
   // Available options
-  const priorities = ["High", "medium", "Low", "None"];
+  const priorities = ["High", "Medium", "Low", "None"];
   const categories = [
     "Work",
     "Personal",

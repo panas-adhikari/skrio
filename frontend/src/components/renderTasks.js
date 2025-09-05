@@ -111,7 +111,7 @@ function TaskList() {
                       id={`_checkbox-${task.id}`}
                       type="checkbox"
                       onClick={(e) => handleComplete(e, task.id, task)}
-                      checked={task.task_done === "Done"}
+                      defaultChecked={task.task_done === "Done"}
                     />
                     <label htmlFor={`_checkbox-${task.id}`}>
                       <div className="tick_mark"></div>

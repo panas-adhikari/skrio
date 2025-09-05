@@ -1,5 +1,5 @@
 from flask import Flask, jsonify, request
-from flask_cors import CORS
+from flask_cors import CORS #type: ignore
 from managers.taskBook import Task, TaskBook
 from managers.loginManager import HandleLogin , HandleRegister 
 from managers.sessionManager import get_requester_user
@@ -130,6 +130,20 @@ def register():
         status_code = 400
 
     return jsonify(result), status_code
+
+@app.route('/check_user', methods=['GET'])
+def check_user():
+    print("Check User Request received ")
+    jwt_token = request.headers.get('Authorization')
+    if not jwt_token:
+        return jsonify({"error": "Unauthorized"}), 401
+    user_id = get_requester_user(jwt_token)
+    # existence = check_user_validity(user_id)
+    # if not existence:
+        # return jsonify({"error": "Unauthorized"}), 401
+    if not user_id:
+        return jsonify({"error": "Unauthorized"}), 401
+    return jsonify({"status": "success", "message": "User is authenticated" , "exists":True}), 200
 
 if __name__ == "__main__":
     try:

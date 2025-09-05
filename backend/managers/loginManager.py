@@ -1,4 +1,4 @@
-import bcrypt
+import bcrypt #type: ignore
 from managers.db import DBUserManager
 from managers.sessionManager import generate_jwt
 
@@ -61,3 +61,4 @@ def HandleRegister(username: str, password: str, email: str) -> dict:
         return {"status": "success", "message": "User registered successfully", "token": token}
     else:
         return {"status": "error", "message": "Failed to register user", "server_error": True}
+    
