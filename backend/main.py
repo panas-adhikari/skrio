@@ -1,7 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS #type: ignore
 from managers.taskBook import Task, TaskBook
-from managers.loginManager import HandleLogin , HandleRegister , check_user_validity
+from managers.loginManager import HandleLogin , HandleRegister 
 from managers.sessionManager import get_requester_user
 
 
@@ -138,9 +138,9 @@ def check_user():
     if not jwt_token:
         return jsonify({"error": "Unauthorized"}), 401
     user_id = get_requester_user(jwt_token)
-    existence = check_user_validity(user_id)
-    if not existence:
-        return jsonify({"error": "Unauthorized"}), 401
+    # existence = check_user_validity(user_id)
+    # if not existence:
+        # return jsonify({"error": "Unauthorized"}), 401
     if not user_id:
         return jsonify({"error": "Unauthorized"}), 401
     return jsonify({"status": "success", "message": "User is authenticated" , "exists":True}), 200

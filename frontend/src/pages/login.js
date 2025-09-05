@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import image from "../assets/image.jpg";
 import { RegisterNewUser, HandleLogin } from "../context/apiManager";
 
@@ -8,10 +8,17 @@ function Login({ onLoginSuccess }) {
   const [password, setPassword] = useState("");
   const [email, setEmail] = useState("");
   const [errors, setErrors] = useState({});
+  const [loginError,setLoginError] = useState(null);
 
+  function clearForm(){
+    setPassword("");
+    setEmail("");
+    setErrors({});
+    setUsername("");
+  }
   const usernameRegex = /^[a-zA-Z0-9_]{3,16}$/;
   const passwordRegex =
-    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,64}$/;
+    /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&#_.])[A-Za-z\d@$!%*?&]{8,64}$/;
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
   const handleSubmit = async (e) => {
@@ -37,15 +44,20 @@ function Login({ onLoginSuccess }) {
     if (Object.keys(newErrors).length === 0) {
       if (isRegister) {
         const result = await RegisterNewUser({ username, password, email });
+        console.log("register result"+result)
         if (result?.success) {
-          // Pass token + user back to parent
-          onLoginSuccess(result.user, result.token);
+          console.log("userRegistered");
+
+          clearForm();
+          onLoginSuccess();
         }
       } else {
         const result = await HandleLogin({ username, password });
         if (result?.success) {
-          // Pass token + user back to parent
-          onLoginSuccess(result.user, result.token);
+          clearForm();
+          onLoginSuccess();
+        }else if(!result?.success){
+          setLoginError("The User not found or Password Doesnot Match")
         }
       }
     }
@@ -65,7 +77,7 @@ function Login({ onLoginSuccess }) {
         <h3 className="text-center mb-4">
           {isRegister ? "Register" : "Login"}
         </h3>
-
+        {loginError && <p style={{color:"red"}}>The Username or Password Doesnot Match</p>}
         <form onSubmit={handleSubmit}>
           {isRegister && (
             <div className="mb-3">

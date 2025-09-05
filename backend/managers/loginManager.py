@@ -62,10 +62,3 @@ def HandleRegister(username: str, password: str, email: str) -> dict:
     else:
         return {"status": "error", "message": "Failed to register user", "server_error": True}
     
-def check_user_validity(user_id: str) -> bool:
-    '''Function to check if a user exists in the database by their user_id'''
-    user_manager = DBUserManager()
-    exists = user_manager.user_exists(user_id)
-    print("Checking user's Validiy :",exists)
-    del user_manager
-    return exists

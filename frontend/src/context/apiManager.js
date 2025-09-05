@@ -1,26 +1,26 @@
 import axios from "axios";
 
-const axios_base_url = "http://192.168.1.65:5000/";
+const axios_base_url = "http://127.0.0.1:5000/";
 //function to get the tasks from the backend api
-function FetchTaskList(dispatch) {
-  // console.log("jwt token "+localStorage.getItem("token"));
-  const asyncFetch = async () => {
-    try {
-      const response = await axios.get(`${axios_base_url}get_tasks`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
-      });
-      if (response.status === 200) {
-        const taskList = response.data;
-        // console.log(taskList);
-        dispatch({ type: "UPDATE_TASKLIST", payload: taskList });
-      } else {
-        console.log("STATUS CODE : " + response.status);
-      }
-    } catch (e) {
-      console.log("ERROR " + e);
+async function FetchTaskList(dispatch) {
+  try {
+    const response = await axios.get(`${axios_base_url}get_tasks`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem("token")}` },
+    });
+
+    if (response.status === 200) {
+      const taskList = response.data;
+      dispatch({ type: "UPDATE_TASKLIST", payload: taskList });
     }
-  };
-  asyncFetch();
+  } catch (e) {
+    if (e.response?.status === 401) {
+      console.log("unauthorized signal");
+      localStorage.clear();
+      dispatch({ type: "UNAUTHORIZE" });
+    } else {
+      console.log("ERROR", e.response || e.message);
+    }
+  }
 }
 
 //function to delete api in the backend adnd dispatch the update to the app context
@@ -42,7 +42,13 @@ function DeleteTask(taskId, dispatch) {
         FetchTaskList(dispatch);
       }
     } catch (e) {
-      console.log("Error : " + e);
+      if (e.response?.status === 401) {
+      console.log("unauthorized signal");
+      localStorage.clear();
+      dispatch({ type: "UNAUTHORIZE" });
+    } else {
+      console.log("ERROR", e.response || e.message);
+    }
     }
   };
   asyncDel();
@@ -63,7 +69,8 @@ function Addtask(task, dispatch) {
         dispatch({ type: "ADD_TASK", payload: task });
       }
     } catch (e) {
-      console.log(e);
+      if(e.response?.status===401)
+      dispatch({type:"UNAUTHORIZED"});
     }
   };
   asyncAdd();
@@ -84,14 +91,20 @@ function UpdateTask(task, dispatch) {
         dispatch({ type: "UPDATE_TASK", payload: task });
       }
     } catch (e) {
+      if (e.response?.status === 401) {
+      console.log("unauthorized signal");
+      localStorage.clear();
+      dispatch({ type: "UNAUTHORIZE" });
+    } else {
+      console.log("ERROR", e.response || e.message);
+    }
       console.log(e);
     }
   };
   asyncUpdate();
 }
 
-function RegisterNewUser(credentials) {
-  const asyncRegister = async () => {
+async function RegisterNewUser(credentials) {
     try {
       const response = await axios.post(
         `${axios_base_url}register`,
@@ -100,10 +113,10 @@ function RegisterNewUser(credentials) {
 
       if (response.status === 200) {
         const data = response.data;
-
+        console.log("register obtained data "+data);
         if (data.status === "success") {
           localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user || {}));
+          localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("isLoggedIn", "true");
           return { success: true };
         } else {
@@ -114,9 +127,7 @@ function RegisterNewUser(credentials) {
     } catch (e) {
       console.log(e);
       return { success: false };
-    }
-  };
-  return asyncRegister();
+    };
 }
 async function HandleLogin(credentials) {
   try {
@@ -127,14 +138,14 @@ async function HandleLogin(credentials) {
       if (data.status === "success") {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
-        return { success: true }; // <-- FIX
+        localStorage.setItem("isLoggedIn","true")
+        return { success: true };
       } else {
         return { success: false, message: data.message };
       }
     }
     return { success: false };
   } catch (e) {
-    console.log("Login error:", e);
     return { success: false, error: e };
   }
 }

@@ -175,14 +175,15 @@ class DBUserManager:
         except Exception as e:
             print("Error during authentication:", e)
             return {"success": 4, "message": "Error during authentication"}
-    def user_exists(self, user_id) -> bool:
-        '''Function to check if a user exists in the database by their user_id'''
-        try:
-            user = self.users_collection.find_one({"user_id": user_id})
-            return user is not None
-        except Exception as e:
-            print("Error checking user existence:", e)
-            return False
+    # def user_exists(self, user_id) -> bool:
+    #     '''Function to check if a user exists in the database by their user_id'''
+    #     try:
+    #         user = self.users_collection.find_one({"user_id": user_id})
+    #         print(user)
+    #         return user is not None
+    #     except Exception as e:
+    #         print("Error checking user existence:", e)
+    #         return False
     def close_connection(self):
         '''Close the connection if required'''
         self.client.close()

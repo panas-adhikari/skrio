@@ -1,46 +1,43 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap.bundle.min.js";
-import { AppProvider } from "./context/AppContext";
+import { AppProvider, useAppContext } from "./context/AppContext";
 import Home from "./pages/home";
 import Login from "./pages/login";
-import { checkUserExists } from "./context/apiManager";
 
 function AppContent() {
-  const [loggedIn , setLoggedIn] = useState(localStorage.getItem("isLoggedIn") === "true");
+  const { state, dispatch } = useAppContext();
 
-  const handleLogout = () => {
-    setLoggedIn(false);
-    localStorage.removeItem("token");
-    localStorage.removeItem("user");
-    localStorage.removeItem("isLoggedIn");
-  };
-
-  return loggedIn ? (
-    <Home setLogout={handleLogout} />
-  ) : (
-    <Login onLoginSuccess={() => setLoggedIn(true)} />
-  );
-}
-function MainApp() {
   useEffect(() => {
     try {
-      const token = localStorage.getItem("token");
-      const user = localStorage.getItem("user");
-      if (token && user) {
-        const userExistence = checkUserExists();
-        if (!userExistence) {
-          localStorage.removeItem("token");
-          localStorage.removeItem("user");
-          localStorage.setItem("isLoggedIn", "false");
-        }
+      const isLoggedIn = localStorage.getItem("isLoggedIn");
+      if (isLoggedIn === "true") {
+        dispatch({ type: "AUTHORIZE" });
+      } else {
+        dispatch({ type: "UNAUTHORIZE" });
       }
     } catch (e) {
       console.log(e);
     }
-  }, []);
+  }, [dispatch]);
+
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    localStorage.removeItem("isLoggedIn");
+    dispatch({ type: "UNAUTHORIZE" });
+  };
+
+  return state.isAuthenticated ? (
+    <Home setLogout={handleLogout} />
+  ) : (
+    <Login onLoginSuccess={() => dispatch({ type: "AUTHORIZE" })} />
+  );
+}
+
+function MainApp() {
   return (
     <AppProvider>
       <AppContent />
