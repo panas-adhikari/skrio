@@ -92,7 +92,7 @@ function Login({ onLoginSuccess }) {
     >
       <div className="card shadow p-4 w-100" style={{ maxWidth: "400px" }}>
         <h3 className="text-center mb-4">
-          {isRegister ? "Register" : "Login"}
+          {isRegister ? "Register" : "Login Now"}
         </h3>
         {loginError && <p style={{ color: "red" }}>{loginError}</p>}
 
