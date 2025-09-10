@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const axios_base_url = "https://todolist-br4v.onrender.com";
+const axios_base_url = "https://todolist-br4v.onrender.com/";
 //function to get the tasks from the backend api
 async function FetchTaskList(dispatch) {
   try {
