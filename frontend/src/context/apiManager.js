@@ -146,7 +146,7 @@ async function HandleLogin(credentials) {
         return { success: false, message: data.message };
       }
     }
-    return { success: false };
+    return { success: false,error:e };
   } catch (e) {
     return { success: false, error: e };
   }
