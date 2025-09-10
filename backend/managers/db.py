@@ -1,5 +1,11 @@
 from pymongo import MongoClient #type: ignore
 from datetime import datetime , timezone #for logging the timestamp of the creating and insertion of the task
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+mongo_uri = os.getenv("MONGO_URI")
+print(mongo_uri)
 # def printdb(args):
 #     print(f"Database Log : {args}")
 
@@ -7,7 +13,7 @@ class DBTaskManager:
     '''
     This class create a connection to the mongodb server and provides several function to interact with the database.
     '''
-    def __init__(self ,db_name="taskBookLibrary",collection_name="task_book",free_id_pool = "free_id_pool" ,url="mongodb://localhost:27017"):
+    def __init__(self ,db_name="taskBookLibrary",collection_name="task_book",free_id_pool = "free_id_pool" ,url=mongo_uri):
         self.client = MongoClient(url)
         self.db = self.client[db_name]
         self.tasks_collection = self.db[collection_name]
@@ -93,7 +99,7 @@ class DBTaskManager:
         self.client.close()
 
 class DBUserManager:
-    def __init__(self , db_name="taskBookLibrary" , collection_name="users" , url="mongodb://localhost:27017"):
+    def __init__(self , db_name="taskBookLibrary" , collection_name="users" , url=mongo_uri):
         self.client = MongoClient(url)
         self.db = self.client[db_name]
         self.users_collection = self.db[collection_name]
@@ -191,5 +197,5 @@ class DBUserManager:
 if __name__ == "__main__":
     db_manager = DBTaskManager()
     user_manager = DBUserManager()
-    db_manager.reset_database()
-    user_manager.reset_database()
+    # db_manager.reset_database()
+    # user_manager.reset_database()

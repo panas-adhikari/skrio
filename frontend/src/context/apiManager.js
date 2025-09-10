@@ -128,7 +128,7 @@ async function RegisterNewUser(credentials) {
           message: e.response.data.message,
         }
       }
-      return { success: false };
+      return { success: false ,message:e.response.data.message};
     };
 }
 async function HandleLogin(credentials) {
