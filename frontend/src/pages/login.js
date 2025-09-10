@@ -193,7 +193,7 @@ function Login({ onLoginSuccess }) {
                   className="btn btn-link p-0"
                   onClick={() => setIsRegister(false)}
                 >
-                  Login
+                  Login Now
                 </button>
               </>
             ) : (
