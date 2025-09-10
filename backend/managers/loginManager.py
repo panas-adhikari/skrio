@@ -58,7 +58,8 @@ def HandleRegister(username: str, password: str, email: str) -> dict:
     if result:
         user_id = str(result.inserted_id)
         token = generate_jwt(user_id)
-        return {"status": "success", "message": "User registered successfully", "token": token}
+        print(username)
+        return {"status": "success", "message": "User registered successfully", "token": token , "user":username}
     else:
         return {"status": "error", "message": "Failed to register user", "server_error": True}
     

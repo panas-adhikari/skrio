@@ -60,11 +60,11 @@ function Login({ onLoginSuccess }) {
             clearForm();
             onLoginSuccess();
           } else {
-            setErrors({ registerError: result.message });
+            setErrors({ registerError: result?.message });
           }
         } else {
           const result = await HandleLogin({ username, password });
-          if (result.success) {
+          if (result?.success) {
             clearForm();
             onLoginSuccess();
           } else {

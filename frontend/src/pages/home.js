@@ -8,7 +8,15 @@ import { FaUserCircle } from "react-icons/fa";
 function Home({ setLogout }) {
   const [show, setShow] = useState(false);
   const [dropdownOpen, setDropdownOpen] = useState(false);
-  const user = JSON.parse(localStorage.getItem("user"))?.username || "User";
+  let user = "User";
+  try {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      user = JSON.parse(storedUser)?.username || "User";
+    }
+  } catch (e) {
+    console.error("Invalid user data in localStorage:", e);
+  }
 
   return (
     <div className="container">
@@ -30,7 +38,10 @@ function Home({ setLogout }) {
 
           {/* Hamburger + User Avatar */}
           <div className="d-flex align-items-center">
-            <Dropdown show={dropdownOpen} onToggle={() => setDropdownOpen(!dropdownOpen)}>
+            <Dropdown
+              show={dropdownOpen}
+              onToggle={() => setDropdownOpen(!dropdownOpen)}
+            >
               <Dropdown.Toggle
                 variant="light"
                 id="dropdown-basic"
@@ -48,7 +59,9 @@ function Home({ setLogout }) {
               </Dropdown.Toggle>
 
               <Dropdown.Menu align="end">
-                <Dropdown.Item disabled>Signed in as <b>{user}</b></Dropdown.Item>
+                <Dropdown.Item disabled>
+                  Signed in as <b>{user}</b>
+                </Dropdown.Item>
                 <Dropdown.Divider />
                 <Dropdown.Item onClick={setLogout}>Logout</Dropdown.Item>
               </Dropdown.Menu>

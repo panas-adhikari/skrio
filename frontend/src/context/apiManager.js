@@ -1,6 +1,7 @@
 import axios from "axios";
 
 const axios_base_url = "https://todolist-br4v.onrender.com/";
+// const axios_base_url = "https://192.168.100.159:5000/"
 //function to get the tasks from the backend api
 async function FetchTaskList(dispatch) {
   try {
@@ -105,32 +106,41 @@ function UpdateTask(task, dispatch) {
 }
 
 async function RegisterNewUser(credentials) {
-    try {
-      const response = await axios.post(
-        `${axios_base_url}register`,
-        credentials
-      );
+  try {
+    const response = await axios.post(
+      `${axios_base_url}register`,
+      credentials
+    );
 
-      if (response.status === 200) {
-        const data = response.data;
-        console.log("register obtained data "+data);
-        if (data.status === "success") {
-          localStorage.setItem("token", data.token);
-          localStorage.setItem("user", JSON.stringify(data.user));
-          localStorage.setItem("isLoggedIn", "true");
-          return { success: true ,message:"Go back to login and try logging in"};
-        }
+    if (response.status === 201) {
+      const data = response.data;
+      console.log("register obtained data", data);
+
+      if (data.status === "success") {
+        localStorage.setItem("token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+        localStorage.setItem("isLoggedIn", "true");
+        return { success: true, message: "Go back to login and try logging in" };
+      } else {
+        // ✅ Handle the case when data.status is not "success"
+        return { success: false, message: data.message || "Registration failed Try logging in" };
       }
-    } catch (e) {
-      if(e.response){
-        return{
-          success:false,
-          message: e.response.data.message,
-        }
-      }
-      return { success: false ,message:e.response.data.message};
-    };
+    }
+
+    // ✅ Handle unexpected non-200 status
+    return { success: false, message: "Unexpected response from server" };
+
+  } catch (e) {
+    if (e.response) {
+      return {
+        success: false,
+        message: e.response.data?.message || "Request failed",
+      };
+    }
+    return { success: false, message: e.message || "Unexpected error" };
+  }
 }
+
 async function HandleLogin(credentials) {
   try {
     const response = await axios.post(`${axios_base_url}login`, credentials);
@@ -141,14 +151,14 @@ async function HandleLogin(credentials) {
         localStorage.setItem("token", data.token);
         localStorage.setItem("user", JSON.stringify(data.user));
         localStorage.setItem("isLoggedIn","true")
-        return { success: true };
+        return { success: true , message:"Success" };
       } else {
-        return { success: false, message: data.message };
+        return { success: false, message: "Error " };
       }
     }
-    return { success: false };
+    return { success: false,message:"Unknow Error" };
   } catch (e) {
-    return { success: false, error: e };
+    return { success: false, message: e };
   }
 }
 async function checkUserExists() {
