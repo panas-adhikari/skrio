@@ -118,15 +118,17 @@ async function RegisterNewUser(credentials) {
           localStorage.setItem("token", data.token);
           localStorage.setItem("user", JSON.stringify(data.user));
           localStorage.setItem("isLoggedIn", "true");
-          return { success: true };
-        } else {
-          console.log("Registration failed:", data.message);
-          return { success: false };
+          return { success: true ,message:"Go back to login and try logging in"};
         }
       }
     } catch (e) {
-      console.log(e);
-      return { success: false };
+      if(e.response){
+        return{
+          success:false,
+          message: e.response.data.message,
+        }
+      }
+      return { success: false ,message:e.response.data.message};
     };
 }
 async function HandleLogin(credentials) {
