@@ -8,7 +8,7 @@ from managers.sessionManager import get_requester_user
 
 app = Flask(__name__)
 # CORS(app , origins=["http://192.168.1.65:3000"])
-CORS(app ,origins=["https://skrio.vercel.app"])
+CORS(app, resources={r"/*": {"origins": "*"}})
 taskbook = TaskBook()
 
 @app.route('/add_task', methods=['POST'])
